@@ -9,6 +9,14 @@ import org.activiti.engine.history.HistoricVariableInstance;
 
 import java.util.List;
 
+/**
+ * ClassName: HistoryQueryTest
+ * Description: 历史查询
+ * Date: 2016/7/14 8:19
+ *
+ * @author SAM SHO
+ * @version V1.0
+ */
 public class HistoryQueryTest {
 
     ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
@@ -17,7 +25,7 @@ public class HistoryQueryTest {
      * 查询历史流程实例
      */
     public void findHistoryProcessInstance() {
-        String processInstanceId = "2101";
+        String processInstanceId = "25001";
         HistoricProcessInstance hpi = processEngine.getHistoryService()//与历史数据（历史表）相关的Service
                 .createHistoricProcessInstanceQuery()//创建历史流程实例查询
                 .processInstanceId(processInstanceId)//使用流程实例ID查询
@@ -27,10 +35,10 @@ public class HistoryQueryTest {
     }
 
     /**
-     * 查询历史活动
+     * 查询历史活动(包括start和end)
      */
     public void findHistoryActiviti() {
-        String processInstanceId = "2101";
+        String processInstanceId = "25001";
         List<HistoricActivityInstance> list = processEngine.getHistoryService()//
                 .createHistoricActivityInstanceQuery()//创建历史活动实例的查询
                 .processInstanceId(processInstanceId)//
@@ -48,7 +56,7 @@ public class HistoryQueryTest {
      * 查询历史任务
      */
     public void findHistoryTask() {
-        String processInstanceId = "2101";
+        String processInstanceId = "25001";
         List<HistoricTaskInstance> list = processEngine.getHistoryService()//与历史数据（历史表）相关的Service
                 .createHistoricTaskInstanceQuery()//创建历史任务实例查询
                 .processInstanceId(processInstanceId)//
@@ -66,7 +74,7 @@ public class HistoryQueryTest {
      * 查询历史流程变量
      */
     public void findHistoryProcessVariables() {
-        String processInstanceId = "2101";
+        String processInstanceId = "25001";
         List<HistoricVariableInstance> list = processEngine.getHistoryService()//
                 .createHistoricVariableInstanceQuery()//创建一个历史的流程变量查询对象
                 .processInstanceId(processInstanceId)//

@@ -7,7 +7,14 @@ import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.runtime.ProcessInstance;
 
 import java.io.InputStream;
-
+/**
+ * ClassName: StartTestTest
+ * Description: 开始活动
+ * Date: 2016/7/16 9:44
+ *
+ * @author SAM SHO
+ * @version V1.0
+ */
 public class StartTest {
 
     ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
@@ -16,8 +23,8 @@ public class StartTest {
      * 部署流程定义（从inputStream）
      */
     public void deploymentProcessDefinition_inputStream() {
-        InputStream inputStreamBpmn = this.getClass().getResourceAsStream("start.bpmn");
-        InputStream inputStreamPng = this.getClass().getResourceAsStream("start.png");
+        InputStream inputStreamBpmn = this.getClass().getClassLoader().getResourceAsStream("docs/bpmn/start.bpmn");
+        InputStream inputStreamPng = this.getClass().getClassLoader().getResourceAsStream("docs/bpmn/start.png");
         Deployment deployment = processEngine.getRepositoryService()//与流程定义和部署对象相关的Service
                 .createDeployment()//创建一个部署对象
                 .name("开始活动")//添加部署的名称

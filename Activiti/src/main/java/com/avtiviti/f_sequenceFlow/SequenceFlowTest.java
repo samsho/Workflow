@@ -11,6 +11,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * ClassName: SequenceFlowTest
+ * Description: 连线
+ * Date: 2016/7/15 14:38
+ *
+ * @author SAM SHO
+ * @version V1.0
+ */
 public class SequenceFlowTest {
 
     ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
@@ -19,15 +27,15 @@ public class SequenceFlowTest {
      * 部署流程定义（从inputStream）
      */
     public void deploymentProcessDefinition_inputStream() {
-        InputStream inputStreamBpmn = this.getClass().getResourceAsStream("sequenceFlow.bpmn");
-        InputStream inputStreamPng = this.getClass().getResourceAsStream("sequenceFlow.png");
+        InputStream inputStreamBpmn = this.getClass().getClassLoader().getResourceAsStream("docs/bpmn/sequenceFlow.bpmn");
+        InputStream inputStreamPng = this.getClass().getClassLoader().getResourceAsStream("docs/bpmn/sequenceFlow.png");
         Deployment deployment = processEngine.getRepositoryService()//与流程定义和部署对象相关的Service
                 .createDeployment()//创建一个部署对象
                 .name("连线")//添加部署的名称
                 .addInputStream("sequenceFlow.bpmn", inputStreamBpmn)//
                 .addInputStream("sequenceFlow.png", inputStreamPng)//
                 .deploy();//完成部署
-        System.out.println("部署ID：" + deployment.getId());//
+        System.out.println("部署ID：" + deployment.getId());//52501
         System.out.println("部署名称：" + deployment.getName());//
     }
 
@@ -39,8 +47,8 @@ public class SequenceFlowTest {
         String processDefinitionKey = "sequenceFlow";
         ProcessInstance pi = processEngine.getRuntimeService()//与正在执行的流程实例和执行对象相关的Service
                 .startProcessInstanceByKey(processDefinitionKey);//使用流程定义的key启动流程实例，key对应helloworld.bpmn文件中id的属性值，使用key值启动，默认是按照最新版本的流程定义启动
-        System.out.println("流程实例ID:" + pi.getId());//流程实例ID    101
-        System.out.println("流程定义ID:" + pi.getProcessDefinitionId());//流程定义ID   helloworld:1:4
+        System.out.println("流程实例ID:" + pi.getId());//流程实例ID    55001
+        System.out.println("流程定义ID:" + pi.getProcessDefinitionId());//流程定义ID   sequenceFlow:1:52504
     }
 
     /**
@@ -82,10 +90,10 @@ public class SequenceFlowTest {
      */
     public void completeMyPersonalTask() {
         //任务ID
-        String taskId = "3103";
+        String taskId = "57503";
         //完成任务的同时，设置流程变量，使用流程变量用来指定完成任务后，下一个连线，对应sequenceFlow.bpmn文件中${message=='不重要'}
         Map<String, Object> variables = new HashMap<String, Object>();
-        variables.put("message", "重要");
+        variables.put("message", "重要");//不重要，则结束
         processEngine.getTaskService()//与正在执行的任务管理相关的Service
                 .complete(taskId, variables);
         System.out.println("完成任务：任务ID：" + taskId);

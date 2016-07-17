@@ -81,6 +81,13 @@ public class ProcessVariablesTest {
         taskService.setVariable(taskId, "人员信息(添加固定版本)", p);
 
         System.out.println("设置流程变量成功！");
+
+        System.out.println("##########################################################");
+
+        String executionId = "37501";
+        RuntimeService runtimeService = processEngine.getRuntimeService();
+        runtimeService.setVariable(executionId, "execute时间", new Date());
+
     }
 
     /**

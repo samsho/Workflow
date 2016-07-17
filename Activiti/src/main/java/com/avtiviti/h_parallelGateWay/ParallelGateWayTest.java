@@ -8,7 +8,14 @@ import org.activiti.engine.task.Task;
 
 import java.io.InputStream;
 import java.util.List;
-
+/**
+ * ClassName: ParallelGateWayTestTest
+ * Description: 并行网关
+ * Date: 2016/7/16 9:02
+ *
+ * @author SAM SHO
+ * @version V1.0
+ */
 public class ParallelGateWayTest {
 
     ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
@@ -17,15 +24,15 @@ public class ParallelGateWayTest {
      * 部署流程定义（从inputStream）
      */
     public void deploymentProcessDefinition_inputStream() {
-        InputStream inputStreamBpmn = this.getClass().getResourceAsStream("parallelGateWay.bpmn");
-        InputStream inputStreamPng = this.getClass().getResourceAsStream("parallelGateWay.png");
+        InputStream inputStreamBpmn = this.getClass().getClassLoader().getResourceAsStream("docs/bpmn/parallelGateWay.bpmn");
+        InputStream inputStreamPng = this.getClass().getClassLoader().getResourceAsStream("docs/bpmn/parallelGateWay.png");
         Deployment deployment = processEngine.getRepositoryService()//与流程定义和部署对象相关的Service
                 .createDeployment()//创建一个部署对象
                 .name("并行网关")//添加部署的名称
                 .addInputStream("parallelGateWay.bpmn", inputStreamBpmn)//
                 .addInputStream("parallelGateWay.png", inputStreamPng)//
                 .deploy();//完成部署
-        System.out.println("部署ID：" + deployment.getId());//
+        System.out.println("部署ID：" + deployment.getId());//62501
         System.out.println("部署名称：" + deployment.getName());//
     }
 
@@ -37,22 +44,24 @@ public class ParallelGateWayTest {
         String processDefinitionKey = "parallelGateWay";
         ProcessInstance pi = processEngine.getRuntimeService()//与正在执行的流程实例和执行对象相关的Service
                 .startProcessInstanceByKey(processDefinitionKey);//使用流程定义的key启动流程实例，key对应helloworld.bpmn文件中id的属性值，使用key值启动，默认是按照最新版本的流程定义启动
-        System.out.println("流程实例ID:" + pi.getId());//流程实例ID    101
-        System.out.println("流程定义ID:" + pi.getProcessDefinitionId());//流程定义ID   helloworld:1:4
+        System.out.println("流程实例ID:" + pi.getId());//流程实例ID    65001 act_ru_execution表三条数据，一个流程实例，两个执行对象
+        System.out.println("流程定义ID:" + pi.getProcessDefinitionId());//流程定义ID  parallelGateWay:1:62504
     }
 
     /**
      * 查询当前人的个人任务
+     * act_ru_task 两个执行任务
      */
     public void findMyPersonalTask() {
         String assignee = "商家";
+        String processInstanceId = "65001";//
         List<Task> list = processEngine.getTaskService()//与正在执行的任务管理相关的Service
                 .createTaskQuery()//创建任务查询对象
                         /**查询条件（where部分）*/
-                .taskAssignee(assignee)//指定个人任务查询，指定办理人
+//                .taskAssignee(assignee)//指定个人任务查询，指定办理人
 //						.taskCandidateUser(candidateUser)//组任务的办理人查询
 //						.processDefinitionId(processDefinitionId)//使用流程定义ID查询
-//						.processInstanceId(processInstanceId)//使用流程实例ID查询
+						.processInstanceId(processInstanceId)//使用流程实例ID查询
 //						.executionId(executionId)//使用执行对象ID查询
                         /**排序*/
                 .orderByTaskCreateTime().asc()//使用创建时间的升序排列
@@ -77,10 +86,11 @@ public class ParallelGateWayTest {
 
     /**
      * 完成我的任务
+     * 有两个任务，买家、卖家都要完成
      */
     public void completeMyPersonalTask() {
         //任务ID
-        String taskId = "4302";
+        String taskId = "70002";//65010、65007| 67502、70002
         processEngine.getTaskService()//与正在执行的任务管理相关的Service
                 .complete(taskId);
         System.out.println("完成任务：任务ID：" + taskId);

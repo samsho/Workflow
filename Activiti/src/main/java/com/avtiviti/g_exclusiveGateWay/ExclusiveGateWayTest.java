@@ -10,7 +10,14 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * ClassName: ExclusiveGateWayTestTest
+ * Description: 排他网关
+ * Date: 2016/7/15 16:01
+ *
+ * @author SAM SHO
+ * @version V1.0
+ */
 public class ExclusiveGateWayTest {
 
     ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
