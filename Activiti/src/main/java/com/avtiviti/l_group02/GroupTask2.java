@@ -1,11 +1,8 @@
-package com.avtiviti.m_groupUser;
+package com.avtiviti.l_group02;
 
-import org.activiti.engine.IdentityService;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngines;
 import org.activiti.engine.history.HistoricIdentityLink;
-import org.activiti.engine.impl.persistence.entity.GroupEntity;
-import org.activiti.engine.impl.persistence.entity.UserEntity;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.IdentityLink;
@@ -13,8 +10,15 @@ import org.activiti.engine.task.Task;
 
 import java.io.InputStream;
 import java.util.List;
-
-public class TaskTest {
+/**
+ * ClassName: PersonalTask2Test
+ * Description: 组任务，使用监听器
+ * Date: 2016/7/17 15:37
+ *
+ * @author SAM SHO
+ * @version V1.0
+ */
+public class GroupTask2 {
 
     ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
 
@@ -22,8 +26,9 @@ public class TaskTest {
      * 部署流程定义（从inputStream）
      */
     public void deploymentProcessDefinition_inputStream() {
-        InputStream inputStreamBpmn = this.getClass().getResourceAsStream("task.bpmn");
-        InputStream inputStreamPng = this.getClass().getResourceAsStream("task.png");
+        InputStream inputStreamBpmn = this.getClass().getClassLoader().getResourceAsStream("docs/bpmn/personal//way2/task.bpmn");
+        InputStream inputStreamPng = this.getClass().getClassLoader().getResourceAsStream("docs/bpmn/personal//way2/task.png");
+
         Deployment deployment = processEngine.getRepositoryService()//与流程定义和部署对象相关的Service
                 .createDeployment()//创建一个部署对象
                 .name("任务")//添加部署的名称
@@ -32,20 +37,6 @@ public class TaskTest {
                 .deploy();//完成部署
         System.out.println("部署ID：" + deployment.getId());//
         System.out.println("部署名称：" + deployment.getName());//
-        /**添加用户角色组*/
-        IdentityService identityService = processEngine.getIdentityService();//
-        //创建角色
-        identityService.saveGroup(new GroupEntity("总经理"));
-        identityService.saveGroup(new GroupEntity("部门经理"));
-        //创建用户
-        identityService.saveUser(new UserEntity("张三"));
-        identityService.saveUser(new UserEntity("李四"));
-        identityService.saveUser(new UserEntity("王五"));
-        //建立用户和角色的关联关系
-        identityService.createMembership("张三", "部门经理");
-        identityService.createMembership("李四", "部门经理");
-        identityService.createMembership("王五", "总经理");
-        System.out.println("添加组织机构成功");
     }
 
     /**
@@ -64,7 +55,7 @@ public class TaskTest {
      * 查询当前人的个人任务
      */
     public void findMyPersonalTask() {
-        String assignee = "小A";
+        String assignee = "郭靖";
         List<Task> list = processEngine.getTaskService()//与正在执行的任务管理相关的Service
                 .createTaskQuery()//创建任务查询对象
                         /**查询条件（where部分）*/
@@ -92,7 +83,7 @@ public class TaskTest {
      * 查询当前人的组任务
      */
     public void findMyGroupTask() {
-        String candidateUser = "李四1";
+        String candidateUser = "郭靖";
         List<Task> list = processEngine.getTaskService()//与正在执行的任务管理相关的Service
                 .createTaskQuery()//创建任务查询对象
                         /**查询条件（where部分）*/
@@ -120,7 +111,7 @@ public class TaskTest {
      */
     public void completeMyPersonalTask() {
         //任务ID
-        String taskId = "7504";
+        String taskId = "7204";
         processEngine.getTaskService()//与正在执行的任务管理相关的Service
                 .complete(taskId);
         System.out.println("完成任务：任务ID：" + taskId);
@@ -164,9 +155,9 @@ public class TaskTest {
     public void claim() {
         //将组任务分配给个人任务
         //任务ID
-        String taskId = "7504";
+        String taskId = "7204";
         //分配的个人任务（可以是组任务中的成员，也可以是非组任务的成员）
-        String userId = "张三";
+        String userId = "郭靖";
         processEngine.getTaskService()//
                 .claim(taskId, userId);
     }

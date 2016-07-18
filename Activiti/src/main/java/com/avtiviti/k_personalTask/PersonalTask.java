@@ -1,4 +1,4 @@
-package com.avtiviti.k_personalTask02;
+package com.avtiviti.k_personalTask;
 
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngines;
@@ -7,9 +7,19 @@ import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class TaskTest {
+/**
+ * ClassName: PersonalTaskTest
+ * Description: 个人任务
+ * Date: 2016/7/17 9:19
+ * 三种方式： 直接赋值；流程变量动态赋值；监听器
+ * @author SAM SHO
+ * @version V1.0
+ */
+public class PersonalTask {
 
     ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
 
@@ -17,11 +27,11 @@ public class TaskTest {
      * 部署流程定义（从inputStream）
      */
     public void deploymentProcessDefinition_inputStream() {
-        InputStream inputStreamBpmn = this.getClass().getResourceAsStream("task.bpmn");
-        InputStream inputStreamPng = this.getClass().getResourceAsStream("task.png");
+        InputStream inputStreamBpmn = this.getClass().getClassLoader().getResourceAsStream("docs/bpmn/personal//way1/task.bpmn");
+        InputStream inputStreamPng = this.getClass().getClassLoader().getResourceAsStream("docs/bpmn/personal//way1/task.png");
         Deployment deployment = processEngine.getRepositoryService()//与流程定义和部署对象相关的Service
                 .createDeployment()//创建一个部署对象
-                .name("任务")//添加部署的名称
+                .name("个人任务1")//添加部署的名称
                 .addInputStream("task.bpmn", inputStreamBpmn)//
                 .addInputStream("task.png", inputStreamPng)//
                 .deploy();//完成部署
@@ -30,13 +40,16 @@ public class TaskTest {
     }
 
     /**
-     * 启动流程实例
+     * 启动流程实例：流程变量动态赋值
      */
     public void startProcessInstance() {
         //流程定义的key
-        String processDefinitionKey = "task";
+        String processDefinitionKey = "personalTask";
+        /**启动流程实例的同时，设置流程变量，使用流程变量用来指定任务的办理人，对应task.pbmn文件中#{userID}*/
+        Map<String, Object> variables = new HashMap<String, Object>();
+        variables.put("userID", "周芷若");//动态赋值
         ProcessInstance pi = processEngine.getRuntimeService()//与正在执行的流程实例和执行对象相关的Service
-                .startProcessInstanceByKey(processDefinitionKey);//使用流程定义的key启动流程实例，key对应helloworld.bpmn文件中id的属性值，使用key值启动，默认是按照最新版本的流程定义启动
+                .startProcessInstanceByKey(processDefinitionKey, variables);//使用流程定义的key启动流程实例，key对应helloworld.bpmn文件中id的属性值，使用key值启动，默认是按照最新版本的流程定义启动
         System.out.println("流程实例ID:" + pi.getId());//流程实例ID    101
         System.out.println("流程定义ID:" + pi.getProcessDefinitionId());//流程定义ID   helloworld:1:4
     }
@@ -45,7 +58,7 @@ public class TaskTest {
      * 查询当前人的个人任务
      */
     public void findMyPersonalTask() {
-        String assignee = "张翠山";
+        String assignee = "周芷若";
         List<Task> list = processEngine.getTaskService()//与正在执行的任务管理相关的Service
                 .createTaskQuery()//创建任务查询对象
                         /**查询条件（where部分）*/
@@ -80,20 +93,9 @@ public class TaskTest {
      */
     public void completeMyPersonalTask() {
         //任务ID
-        String taskId = "5804";
+        String taskId = "90005";
         processEngine.getTaskService()//与正在执行的任务管理相关的Service
                 .complete(taskId);
         System.out.println("完成任务：任务ID：" + taskId);
     }
-
-    //可以分配个人任务从一个人到另一个人（认领任务）
-    public void setAssigneeTask() {
-        //任务ID
-        String taskId = "5804";
-        //指定的办理人
-        String userId = "张翠山";
-        processEngine.getTaskService()//
-                .setAssignee(taskId, userId);
-    }
-
 }

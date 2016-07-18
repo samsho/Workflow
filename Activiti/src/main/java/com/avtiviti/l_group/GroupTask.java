@@ -12,8 +12,15 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-public class TaskTest {
+/**
+ * ClassName: PersonalTask2Test
+ * Description: 组任务，使用流程参数
+ * Date: 2016/7/17 15:37
+ *
+ * @author SAM SHO
+ * @version V1.0
+ */
+public class GroupTask {
 
     ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
 
@@ -21,8 +28,9 @@ public class TaskTest {
      * 部署流程定义（从inputStream）
      */
     public void deploymentProcessDefinition_inputStream() {
-        InputStream inputStreamBpmn = this.getClass().getResourceAsStream("task.bpmn");
-        InputStream inputStreamPng = this.getClass().getResourceAsStream("task.png");
+        InputStream inputStreamBpmn = this.getClass().getClassLoader().getResourceAsStream("docs/bpmn/personal//way2/task.bpmn");
+        InputStream inputStreamPng = this.getClass().getClassLoader().getResourceAsStream("docs/bpmn/personal//way2/task.png");
+
         Deployment deployment = processEngine.getRepositoryService()//与流程定义和部署对象相关的Service
                 .createDeployment()//创建一个部署对象
                 .name("任务")//添加部署的名称

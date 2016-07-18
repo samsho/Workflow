@@ -1,8 +1,11 @@
-package com.avtiviti.l_group02;
+package com.avtiviti.m_groupUser;
 
+import org.activiti.engine.IdentityService;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngines;
 import org.activiti.engine.history.HistoricIdentityLink;
+import org.activiti.engine.impl.persistence.entity.GroupEntity;
+import org.activiti.engine.impl.persistence.entity.UserEntity;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.IdentityLink;
@@ -11,7 +14,15 @@ import org.activiti.engine.task.Task;
 import java.io.InputStream;
 import java.util.List;
 
-public class TaskTest {
+/**
+ * ClassName: PersonalTask2Test
+ * Description: activiti自带角色组任务
+ * Date: 2016/7/17 15:37
+ *
+ * @author SAM SHO
+ * @version V1.0
+ */
+public class GroupRoleTest {
 
     ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
 
@@ -19,16 +30,33 @@ public class TaskTest {
      * 部署流程定义（从inputStream）
      */
     public void deploymentProcessDefinition_inputStream() {
-        InputStream inputStreamBpmn = this.getClass().getResourceAsStream("task.bpmn");
-        InputStream inputStreamPng = this.getClass().getResourceAsStream("task.png");
+        InputStream inputStreamBpmn = this.getClass().getClassLoader().getResourceAsStream("docs/bpmn/group/way3/task.bpmn");
+        InputStream inputStreamPng = this.getClass().getClassLoader().getResourceAsStream("docs/bpmn/group/way3/task.png");
+
         Deployment deployment = processEngine.getRepositoryService()//与流程定义和部署对象相关的Service
                 .createDeployment()//创建一个部署对象
-                .name("任务")//添加部署的名称
+                .name("组角色任务")//添加部署的名称
                 .addInputStream("task.bpmn", inputStreamBpmn)//
                 .addInputStream("task.png", inputStreamPng)//
                 .deploy();//完成部署
-        System.out.println("部署ID：" + deployment.getId());//
+        System.out.println("部署ID：" + deployment.getId());//105001
         System.out.println("部署名称：" + deployment.getName());//
+
+
+        /**添加用户角色组*/
+        IdentityService identityService = processEngine.getIdentityService();//
+        //创建角色
+        identityService.saveGroup(new GroupEntity("总经理"));
+        identityService.saveGroup(new GroupEntity("部门经理"));
+        //创建用户
+        identityService.saveUser(new UserEntity("张三"));
+        identityService.saveUser(new UserEntity("李四"));
+        identityService.saveUser(new UserEntity("王五"));
+        //建立用户和角色的关联关系
+        identityService.createMembership("张三", "部门经理");
+        identityService.createMembership("李四", "部门经理");
+        identityService.createMembership("王五", "总经理");
+        System.out.println("添加组织机构成功");
     }
 
     /**
@@ -36,18 +64,18 @@ public class TaskTest {
      */
     public void startProcessInstance() {
         //流程定义的key
-        String processDefinitionKey = "task";
+        String processDefinitionKey = "GroupRoleTask";
         ProcessInstance pi = processEngine.getRuntimeService()//与正在执行的流程实例和执行对象相关的Service
                 .startProcessInstanceByKey(processDefinitionKey);//使用流程定义的key启动流程实例，key对应helloworld.bpmn文件中id的属性值，使用key值启动，默认是按照最新版本的流程定义启动
-        System.out.println("流程实例ID:" + pi.getId());//流程实例ID
-        System.out.println("流程定义ID:" + pi.getProcessDefinitionId());//流程定义ID
+        System.out.println("流程实例ID:" + pi.getId());//流程实例ID 107501
+        System.out.println("流程定义ID:" + pi.getProcessDefinitionId());//流程定义ID GroupRoleTask:1:105004
     }
 
     /**
      * 查询当前人的个人任务
      */
     public void findMyPersonalTask() {
-        String assignee = "郭靖";
+        String assignee = "张三";
         List<Task> list = processEngine.getTaskService()//与正在执行的任务管理相关的Service
                 .createTaskQuery()//创建任务查询对象
                         /**查询条件（where部分）*/
@@ -75,7 +103,7 @@ public class TaskTest {
      * 查询当前人的组任务
      */
     public void findMyGroupTask() {
-        String candidateUser = "郭靖";
+        String candidateUser = "李四";
         List<Task> list = processEngine.getTaskService()//与正在执行的任务管理相关的Service
                 .createTaskQuery()//创建任务查询对象
                         /**查询条件（where部分）*/
@@ -103,7 +131,7 @@ public class TaskTest {
      */
     public void completeMyPersonalTask() {
         //任务ID
-        String taskId = "7204";
+        String taskId = "7504";
         processEngine.getTaskService()//与正在执行的任务管理相关的Service
                 .complete(taskId);
         System.out.println("完成任务：任务ID：" + taskId);
@@ -115,7 +143,7 @@ public class TaskTest {
      */
     public void findRunPersonTask() {
         //任务ID
-        String taskId = "6204";
+        String taskId = "107504";
         List<IdentityLink> list = processEngine.getTaskService()//
                 .getIdentityLinksForTask(taskId);
         if (list != null && list.size() > 0) {
@@ -147,9 +175,9 @@ public class TaskTest {
     public void claim() {
         //将组任务分配给个人任务
         //任务ID
-        String taskId = "7204";
+        String taskId = "107504";
         //分配的个人任务（可以是组任务中的成员，也可以是非组任务的成员）
-        String userId = "郭靖";
+        String userId = "张三";
         processEngine.getTaskService()//
                 .claim(taskId, userId);
     }
@@ -160,7 +188,7 @@ public class TaskTest {
      */
     public void setAssigee() {
         //任务ID
-        String taskId = "6204";
+        String taskId = "107504";
         processEngine.getTaskService()//
                 .setAssignee(taskId, null);
     }
@@ -187,6 +215,10 @@ public class TaskTest {
         String userId = "小B";
         processEngine.getTaskService()//
                 .deleteCandidateUser(taskId, userId);
+    }
+
+    public void delete() {
+        processEngine.getRepositoryService().deleteDeployment("102501", true);
     }
 
 }
