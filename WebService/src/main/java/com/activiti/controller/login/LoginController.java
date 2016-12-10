@@ -1,6 +1,8 @@
 package com.activiti.controller.login;
 
 import com.activiti.bean.base.User;
+import com.activiti.entity.ActUser;
+import com.activiti.service.UserService;
 import com.activiti.utils.SidebarUtil;
 import com.google.common.base.Strings;
 import org.slf4j.Logger;
@@ -12,12 +14,26 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+
+/**
+ * ClassName: LoginController
+ * Description:  登录
+ * date: 2015年4月30日 上午10:20:17
+ *
+ * @author sam sho
+ * @version V1.0
+ * @since JDK 1.7
+ */
 @Controller
 public class LoginController {
     private final Logger logger = LoggerFactory.getLogger(LoginController.class);
     private final String redirectAttribute = "url";
+
+    @Resource
+    private UserService userService;
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String renderLogin(HttpServletRequest request, ModelMap modelMap,
@@ -36,7 +52,13 @@ public class LoginController {
                         @RequestParam(value = redirectAttribute, required = false) String url) {
         String error;
         try {
-            User user = new User(16390, "12652", "sam-sho");
+            ActUser actUser = userService.isExist(username, password);
+            if (actUser == null) {
+                logger.error("请先注册~~~~~");
+                return "redirect:/login";
+            }
+
+            User user = new User(actUser.getId(), actUser.getJobNumber(), username);
             user.setSidebar(SidebarUtil.getSideBar());
             request.getSession().setAttribute(User.ATTRIBUTE, user);
             if (!Strings.isNullOrEmpty(url)) {

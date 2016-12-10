@@ -21,7 +21,7 @@ public @interface MethodAnnotation {
     String desc();
 
     enum MethodType {
-        CREATE("新增"), READ("访问"), UPDATE("修改"), DELETE("删除");
+        CREATE("新增"), READ("访问"), UPDATE("修改"), DELETE("删除"), OPERATE("操作");
         private String desc;
 
         MethodType(String desc) {

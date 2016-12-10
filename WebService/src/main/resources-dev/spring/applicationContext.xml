@@ -10,6 +10,7 @@
 
     <import resource="spring-beans.xml"/>
     <import resource="data-source.xml"/>
+    <import resource="spring-activiti.xml"/>
 
 
     <context:component-scan base-package="com.activiti">

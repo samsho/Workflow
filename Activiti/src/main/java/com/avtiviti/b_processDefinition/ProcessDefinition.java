@@ -185,11 +185,11 @@ public class ProcessDefinition {
      */
     public void deleteProcessDefinitionByKey() {
         //流程定义的key
-        String processDefinitionKey = "helloworld";
+//        String processDefinitionKey = "helloworld";
         //先使用流程定义的key查询流程定义，查询出所有的版本
         List<org.activiti.engine.repository.ProcessDefinition> list = processEngine.getRepositoryService()//
                 .createProcessDefinitionQuery()//
-                .processDefinitionKey(processDefinitionKey)//使用流程定义的key查询
+//                .processDefinitionKey(processDefinitionKey)//使用流程定义的key查询
                 .list();
         //遍历，获取每个流程定义的部署ID
         if (list != null && list.size() > 0) {

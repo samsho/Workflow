@@ -27,6 +27,12 @@ public class SidebarUtil {
         formManager.addChild(new SidebarItem("日期选择", "/form/validatorForm", "fa-mars-stroke-h"));
         items.add(formManager);
 
+        SidebarItem activitiManager = new SidebarItem("工作流", "/act", "fa-sitemap");
+        activitiManager.addChild(new SidebarItem("流程定义", "/act/process/list", "fa-mars-stroke-h"));
+        activitiManager.addChild(new SidebarItem("任务管理", "/act/task/list", "fa-mars-stroke-h"));
+        activitiManager.addChild(new SidebarItem("请假单", "/act/leaveBill/list", "fa-mars-stroke-h"));
+        items.add(activitiManager);
+
 /*
 
         SidebarItem messageManager = new SidebarItem("短信管理", "/sms", "fa-envelope-o");

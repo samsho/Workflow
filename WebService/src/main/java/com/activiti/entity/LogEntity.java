@@ -13,7 +13,7 @@ import java.util.Date;
  * @version V1.0
  */
 @Entity
-@Table(name = "boot_log")
+@Table(name = "web_act_log")
 public class LogEntity implements Serializable{
 
     private int id;
